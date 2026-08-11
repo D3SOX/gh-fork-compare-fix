@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub Fork Compare Fix",
+  "version": "1.0.0",
+  "description": "Makes GitHub compare/pull request links on your forks point at your own repository instead of upstream.",
+  "permissions": ["storage", "activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["src/shared.js", "src/content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_title": "GitHub Fork Compare Fix",
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
+  },
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "gh-fork-compare-fix@d3sox.me",
+      "strict_min_version": "115.0"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>GitHub Fork Compare Fix</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>GitHub Fork Compare Fix</h1>
+    <p>
+      Compare and pull request links for these repositories point at the repository itself instead of upstream, using
+      its own default branch as the base. Use <code>owner/repo</code> or <code>owner/*</code>.
+    </p>
+
+    <form id="add-form">
+      <input id="repo-input" type="text" placeholder="owner/repo" autocomplete="off" spellcheck="false" />
+      <button type="submit">Add</button>
+    </form>
+    <div id="error" role="alert"></div>
+
+    <ul id="repo-list"></ul>
+
+    <label class="toggle">
+      <input id="redirect" type="checkbox" />
+      <span>
+        <b>Redirect open compare pages</b>
+        Also redirect when an upstream compare page is already open, instead of only fixing links.
+      </span>
+    </label>
+
+    <script src="shared.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

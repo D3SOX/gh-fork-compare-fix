@@ -1,0 +1,156 @@
+:root {
+  color-scheme: light dark;
+  --fg: #1f2328;
+  --muted: #59636e;
+  --bg: #ffffff;
+  --border: #d1d9e0;
+  --accent: #0969da;
+  --danger: #cf222e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #f0f6fc;
+    --muted: #9198a1;
+    --bg: #0d1117;
+    --border: #3d444d;
+    --accent: #4493f8;
+    --danger: #ff8182;
+  }
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+  max-width: 34rem;
+  font: 14px/1.5 system-ui, sans-serif;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+h1 {
+  font-size: 1.25rem;
+  margin: 0 0 0.25rem;
+}
+
+p {
+  color: var(--muted);
+  margin: 0 0 1.5rem;
+}
+
+code {
+  font-family: ui-monospace, monospace;
+}
+
+input[type='text'],
+button {
+  padding: 0.4rem 0.7rem;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+label.toggle {
+  display: flex;
+  gap: 0.5rem;
+  align-items: start;
+}
+
+label.toggle span {
+  color: var(--muted);
+}
+
+label.toggle b {
+  color: var(--fg);
+  display: block;
+  font-weight: 600;
+}
+
+/* Options page */
+
+form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+input[type='text'] {
+  flex: 1;
+  min-width: 0;
+}
+
+ul {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+ul:empty::after {
+  content: 'No repositories configured yet.';
+  display: block;
+  padding: 0.75rem;
+  color: var(--muted);
+}
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+li button {
+  padding: 0.1rem 0.5rem;
+}
+
+#error {
+  color: var(--danger);
+  margin: -0.5rem 0 1rem;
+  min-height: 1.5em;
+}
+
+/* Popup */
+
+body.popup {
+  width: 17rem;
+  padding: 0.9rem;
+}
+
+body.popup #repo {
+  font-family: ui-monospace, monospace;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+body.popup p {
+  margin: 0.6rem 0 0;
+}
+
+body.popup button {
+  width: 100%;
+  margin-top: 0.9rem;
+}

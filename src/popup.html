@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>GitHub Fork Compare Fix</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="popup">
+    <div id="repo" hidden></div>
+
+    <label class="toggle" id="toggle" hidden>
+      <input id="enabled" type="checkbox" />
+      <span>
+        <b>Compare against this repo</b>
+        Point compare and pull request links here instead of upstream.
+      </span>
+    </label>
+
+    <p id="hint"></p>
+
+    <button id="options" type="button">Manage repositories…</button>
+
+    <script src="shared.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
