@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GitHub Fork Compare Fix — your fork is a real repository</title>
+    <meta
+      name="description"
+      content="Browser extension that makes GitHub compare and pull request links on your forks point at your own repository instead of upstream."
+    />
+    <meta property="og:title" content="GitHub Fork Compare Fix" />
+    <meta
+      property="og:description"
+      content="Stop opening pull requests against upstream by accident. Compare and pull request links on your forks point at your own repository."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gh-fork-compare-fix.d3sox.me/" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #ffffff;
+        --bg-soft: #f6f8fa;
+        --fg: #1f2328;
+        --muted: #59636e;
+        --border: #d1d9e0;
+        --accent: #0969da;
+        --green: #1f883d;
+        --green-fg: #ffffff;
+        --chip: #818b981f;
+        --glow: #0969da1a;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0d1117;
+          --bg-soft: #151b23;
+          --fg: #f0f6fc;
+          --muted: #9198a1;
+          --border: #3d444d;
+          --accent: #4493f8;
+          --green: #238636;
+          --green-fg: #ffffff;
+          --chip: #6a737d33;
+          --glow: #4493f826;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font: 16px/1.6 -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        color: var(--fg);
+        background:
+          radial-gradient(60rem 30rem at 50% -10rem, var(--glow), transparent 70%),
+          var(--bg);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      main,
+      header,
+      footer {
+        max-width: 62rem;
+        margin: 0 auto;
+        padding: 0 1.25rem;
+      }
+
+      code,
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+        font-size: 0.9em;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      /* Header */
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-top: 1.5rem;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-weight: 600;
+      }
+
+      .brand svg {
+        width: 1.6rem;
+        height: 1.6rem;
+      }
+
+      header a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      header a:hover {
+        color: var(--fg);
+      }
+
+      /* Hero */
+
+      .hero {
+        padding: 4.5rem 1.25rem 3rem;
+        text-align: center;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.3rem 0.8rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg-soft);
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .badge .dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 0 0.25rem #1f883d26;
+      }
+
+      h1 {
+        margin: 1.25rem 0 0;
+        font-size: clamp(2.2rem, 6vw, 3.4rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+
+      .hero p {
+        margin: 1rem auto 0;
+        max-width: 38rem;
+        color: var(--muted);
+        font-size: 1.15rem;
+      }
+
+      .cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-top: 2rem;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-soft);
+        color: var(--fg);
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .button:hover {
+        border-color: var(--accent);
+      }
+
+      .button.primary {
+        background: var(--green);
+        border-color: transparent;
+        color: var(--green-fg);
+      }
+
+      .button.primary:hover {
+        filter: brightness(1.1);
+      }
+
+      .button.soon {
+        opacity: 0.65;
+        cursor: default;
+        pointer-events: none;
+      }
+
+      .button.soon::after {
+        content: 'soon';
+        padding: 0.05rem 0.4rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .button svg {
+        width: 1.1rem;
+        height: 1.1rem;
+        fill: currentColor;
+      }
+
+      /* Sections */
+
+      section {
+        padding: 3.5rem 0;
+      }
+
+      h2 {
+        margin: 0 0 0.5rem;
+        font-size: 1.6rem;
+        letter-spacing: -0.01em;
+      }
+
+      .lede {
+        margin: 0 0 2rem;
+        color: var(--muted);
+        max-width: 42rem;
+      }
+
+      /* Before / after */
+
+      .compare {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+      }
+
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-soft);
+        padding: 1rem;
+      }
+
+      .panel h3 {
+        margin: 0 0 0.85rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+
+      .panel.good h3 {
+        color: var(--green);
+      }
+
+      /* A replica of GitHub's branch info bar */
+
+      .infobar {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--bg);
+        padding: 0.8rem 0.9rem;
+        font-size: 0.92rem;
+      }
+
+      .infobar a {
+        text-decoration: none;
+      }
+
+      .infobar a:hover {
+        text-decoration: underline;
+      }
+
+      .branch {
+        display: inline-block;
+        padding: 0 0.35rem;
+        border-radius: 6px;
+        background: var(--chip);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.85em;
+      }
+
+      .gh-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+
+      .gh-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.3rem 0.7rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--fg);
+      }
+
+      .gh-button svg {
+        width: 0.9rem;
+        height: 0.9rem;
+        fill: currentColor;
+      }
+
+      .caption {
+        margin: 0.85rem 0 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      /* Features */
+
+      .features {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @media (max-width: 46rem) {
+        .features {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .feature {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.15rem;
+        background: var(--bg-soft);
+      }
+
+      .feature svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        fill: var(--accent);
+      }
+
+      .feature h3 {
+        margin: 0.6rem 0 0.3rem;
+        font-size: 1.05rem;
+      }
+
+      .feature p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      /* Popup shot */
+
+      .popup-row {
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+      }
+
+      /* A replica of the extension's own popup */
+
+      .popup {
+        width: 17rem;
+        max-width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg);
+        padding: 0.9rem;
+        font-size: 0.9rem;
+        box-shadow: 0 1rem 2rem #0000001a;
+      }
+
+      .popup-repo {
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+      }
+
+      .popup-toggle {
+        display: flex;
+        gap: 0.5rem;
+        align-items: start;
+        color: var(--muted);
+      }
+
+      .popup-toggle b {
+        display: block;
+        color: var(--fg);
+      }
+
+      .popup-toggle input {
+        pointer-events: none;
+        margin-top: 0.3rem;
+      }
+
+      .popup-manage {
+        margin-top: 0.9rem;
+        padding: 0.4rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        text-align: center;
+      }
+
+      @media (max-width: 46rem) {
+        .popup-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Footer */
+
+      footer {
+        padding: 2.5rem 1.25rem 3rem;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.5rem;
+        justify-content: space-between;
+        font-size: 0.9rem;
+      }
+
+      footer a {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <span class="brand">
+        <svg viewBox="0 0 128 128" aria-hidden="true">
+          <g fill="none" stroke="#3fb950" stroke-width="10" stroke-linecap="round">
+            <path d="M40 44v40" />
+            <path d="M40 60h32a16 16 0 0 0 16-16" />
+          </g>
+          <g fill="#3fb950">
+            <circle cx="40" cy="34" r="11" />
+            <circle cx="40" cy="94" r="11" />
+            <circle cx="88" cy="34" r="11" />
+          </g>
+        </svg>
+        GitHub Fork Compare Fix
+      </span>
+      <a href="https://github.com/D3SOX/gh-fork-compare-fix">Source</a>
+    </header>
+
+    <div class="hero">
+      <span class="badge"><span class="dot"></span> Coming soon to Firefox Add-ons and the Chrome Web Store</span>
+      <h1>Your fork is a real repository.<br />GitHub should treat it like one.</h1>
+      <p>
+        On a fork, every compare and pull request link points at upstream — so you open PRs against the wrong
+        repository. This extension points them back at your own, against your own default branch.
+      </p>
+      <div class="cta">
+        <a class="button primary" href="https://github.com/D3SOX/gh-fork-compare-fix/releases/latest">
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"
+            />
+            <path
+              d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06Z"
+            />
+          </svg>
+          Download from GitHub
+        </a>
+        <span class="button soon">Firefox Add-ons</span>
+        <span class="button soon">Chrome Web Store</span>
+      </div>
+    </div>
+
+    <main>
+      <section>
+        <h2>What changes</h2>
+        <p class="lede">
+          Same GitHub, same design — only the repository it talks about is yours. The commit counts are recomputed
+          against your default branch, so they are the numbers that actually matter to you.
+        </p>
+
+        <div class="compare">
+          <div class="panel">
+            <h3>Before</h3>
+            <div class="infobar">
+              <span
+                >This branch is <a href="#">1416 commits ahead of</a> and <a href="#">59 commits behind</a>
+                <span class="branch">upstream/repo:main</span>.</span
+              >
+              <div class="gh-buttons">
+                <span class="gh-button">
+                  <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"
+                    />
+                  </svg>
+                  Contribute
+                </span>
+                <span class="gh-button">Sync fork</span>
+              </div>
+            </div>
+            <p class="caption">Every link here opens a pull request against upstream.</p>
+          </div>
+
+          <div class="panel good">
+            <h3>After</h3>
+            <div class="infobar">
+              <span
+                >This branch is <a href="#">1 commit ahead of</a> and <a href="#">212 commits behind</a>
+                <span class="branch">my-default</span>.</span
+              >
+              <div class="gh-buttons">
+                <span class="gh-button">
+                  <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"
+                    />
+                  </svg>
+                  Contribute
+                </span>
+                <span class="gh-button">Sync fork</span>
+              </div>
+            </div>
+            <p class="caption">Compare, Contribute and "Open pull request" all stay in your repository.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>One click per repository</h2>
+        <div class="popup-row">
+          <div>
+            <p class="lede">
+              Open a repository, click the toolbar icon, done. Nothing happens on repositories you have not enabled —
+              forks you actually contribute upstream from keep working exactly as before. Add a whole account at once
+              with an <code>owner/*</code> pattern in the options page.
+            </p>
+          </div>
+          <div class="popup" role="img" aria-label="The extension popup, with a toggle to enable the current repository">
+            <div class="popup-repo mono">owner/repo</div>
+            <label class="popup-toggle">
+              <input type="checkbox" checked tabindex="-1" />
+              <span>
+                <b>Compare against this repo</b>
+                Point compare and pull request links here instead of upstream.
+              </span>
+            </label>
+            <div class="popup-manage">Manage repositories…</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Everything it fixes</h2>
+        <div class="features">
+          <div class="feature">
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"
+              />
+            </svg>
+            <h3>Every entry point</h3>
+            <p>
+              The Contribute menu, "Compare &amp; pull request", the commits-ahead link and <code>/pull/new/</code>
+              links all land in your repository.
+            </p>
+          </div>
+          <div class="feature">
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"
+              />
+            </svg>
+            <h3>Your default branch</h3>
+            <p>
+              A branch is compared against <em>your</em> default branch, not upstream's — the diff you were looking for.
+            </p>
+          </div>
+          <div class="feature">
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                d="M7.467.133a1.748 1.748 0 0 1 1.066 0l5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.7 1.7 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667Zm.61 1.429a.25.25 0 0 0-.153 0l-5.25 1.68a.25.25 0 0 0-.174.238V7c0 1.358.275 2.666 1.057 3.86.784 1.194 2.121 2.34 4.366 3.297a.2.2 0 0 0 .142 0c2.245-.957 3.582-2.103 4.366-3.297C13.225 9.666 13.5 8.358 13.5 7V3.48a.25.25 0 0 0-.174-.238l-5.25-1.68Z"
+              />
+            </svg>
+            <h3>Nothing leaves your browser</h3>
+            <p>
+              No accounts, no tokens, no third-party requests, no telemetry. It reads github.com pages and stores your
+              repository list — that is all.
+            </p>
+          </div>
+          <div class="feature">
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                d="M15 2.75a.75.75 0 0 1-.75.75h-2a.75.75 0 0 1 0-1.5h2a.75.75 0 0 1 .75.75Zm-9.978 0a.75.75 0 0 1-.75.75H1.75a.75.75 0 0 1 0-1.5h2.522a.75.75 0 0 1 .75.75ZM15 8a.75.75 0 0 1-.75.75H8.75a.75.75 0 0 1 0-1.5h5.5A.75.75 0 0 1 15 8Zm-9 0a.75.75 0 0 1-.75.75h-3.5a.75.75 0 0 1 0-1.5h3.5A.75.75 0 0 1 6 8Zm9 5.25a.75.75 0 0 1-.75.75h-2a.75.75 0 0 1 0-1.5h2a.75.75 0 0 1 .75.75Zm-9.978 0a.75.75 0 0 1-.75.75H1.75a.75.75 0 0 1 0-1.5h2.522a.75.75 0 0 1 .75.75ZM7.5 1.75a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5Zm0 10.5a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5ZM6.75 8a1.75 1.75 0 1 1 3.5 0 1.75 1.75 0 0 1-3.5 0Z"
+              />
+            </svg>
+            <h3>Opt in per repository</h3>
+            <p>
+              Toggle from the toolbar, or list repositories as <code>owner/repo</code> and <code>owner/*</code>.
+              Everything else on GitHub is untouched.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>
+        <a href="https://github.com/D3SOX/gh-fork-compare-fix">Source</a> ·
+        <a href="https://github.com/D3SOX/gh-fork-compare-fix/releases">Releases</a> ·
+        <a href="https://github.com/D3SOX/gh-fork-compare-fix/blob/main/LICENSE">GPL-3.0</a>
+      </span>
+      <span>
+        Made by <a href="https://github.com/D3SOX">D3SOX</a> · written by
+        <a href="https://claude.com/claude-code">Claude</a> (Opus 5, in Claude Code)
+      </span>
+    </footer>
+  </body>
+</html>

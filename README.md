@@ -1,5 +1,8 @@
 # GitHub Fork Compare Fix
 
+**[gh-fork-compare-fix.d3sox.me](https://gh-fork-compare-fix.d3sox.me)** · coming soon to Firefox Add-ons and the
+Chrome Web Store; until then grab a zip from [Releases](https://github.com/D3SOX/gh-fork-compare-fix/releases/latest).
+
 On a fork, GitHub points every compare / pull request link at the upstream repository — the "Contribute" menu, the
 "Compare & pull request" banner and the "N commits ahead" link in the branch info bar. If you use your fork as a real
 repository (own default branch, own PRs), that is the wrong target every single time.
@@ -81,6 +84,11 @@ Store publishing is wired up but stays skipped until the matching secrets exist:
 
 The AMO channel defaults to `listed`; set the repository variable `AMO_CHANNEL` to `unlisted` to get a signed `.xpi`
 attached to the release instead of a review submission.
+
+## Credits
+
+Written by Claude (Opus 5) running in [Claude Code](https://claude.com/claude-code) — including the GitHub endpoint
+spelunking behind the commit counts, and verified against a real browser session on github.com.
 
 ## License
 
