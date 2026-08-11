@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privacy Policy — GitHub Fork Compare Fix</title>
+    <meta
+      name="description"
+      content="Privacy policy for the GitHub Fork Compare Fix browser extension."
+    />
+    <link rel="icon" href="../icon.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #fff;
+        --fg: #1f2328;
+        --muted: #59636e;
+        --border: #d1d9e0;
+        --accent: #0969da;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0d1117;
+          --fg: #f0f6fc;
+          --muted: #9198a1;
+          --border: #3d444d;
+          --accent: #4493f8;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--fg);
+        background: var(--bg);
+        font: 16px/1.65 -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      header,
+      main,
+      footer {
+        max-width: 48rem;
+        margin: 0 auto;
+        padding-right: 1.25rem;
+        padding-left: 1.25rem;
+      }
+
+      header {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      main {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+      }
+
+      footer {
+        padding-top: 1.5rem;
+        padding-bottom: 2.5rem;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 6vw, 3rem);
+        line-height: 1.15;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        margin: 2.25rem 0 0.5rem;
+        font-size: 1.35rem;
+      }
+
+      p,
+      ul {
+        margin-top: 0.5rem;
+      }
+
+      li + li {
+        margin-top: 0.4rem;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      .back,
+      .updated {
+        color: var(--muted);
+      }
+
+      .back {
+        text-decoration: none;
+      }
+
+      .updated {
+        margin-top: 0.5rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header><a class="back" href="../">← GitHub Fork Compare Fix</a></header>
+
+    <main>
+      <h1>Privacy Policy</h1>
+      <p class="updated">Effective August 11, 2026</p>
+
+      <p>
+        GitHub Fork Compare Fix processes only the information needed to rewrite GitHub compare and pull request links
+        for repositories that you enable. The developer does not receive or collect this information.
+      </p>
+
+      <h2>Information processed</h2>
+      <ul>
+        <li>
+          Repository identifiers that you configure, which may contain a GitHub username or organization name, and
+          your redirect preference.
+        </li>
+        <li>
+          The current GitHub repository URL and page content needed for the feature, including links, branch names,
+          default-branch metadata, and ahead/behind commit counts.
+        </li>
+      </ul>
+
+      <h2>How the information is used</h2>
+      <p>
+        This information is used solely to identify enabled repositories, point compare and pull request links at the
+        correct repository, and show branch information relative to that repository's own default branch.
+      </p>
+
+      <h2>Storage and retention</h2>
+      <p>
+        Repository identifiers and the redirect preference are saved with the browser's extension sync storage and
+        may be synchronized by your browser provider. Default-branch names are cached in local extension storage for
+        up to 24 hours. Other GitHub page content is processed temporarily and is not stored by the extension.
+      </p>
+
+      <h2>Network requests and sharing</h2>
+      <p>
+        The extension makes HTTPS requests only to GitHub to obtain repository information required for its features.
+        These requests use your existing GitHub session when applicable, but the extension does not read or store your
+        password, authentication tokens, or cookies. No information is sent to the developer or to advertising,
+        analytics, or telemetry services. Information is not sold or used for advertising.
+      </p>
+
+      <h2>Your choices</h2>
+      <p>
+        You can remove configured repositories in the extension's options page. You can remove locally stored data by
+        uninstalling the extension; synchronized copies are managed through your browser provider.
+      </p>
+
+      <h2>Limited Use</h2>
+      <p>
+        The use of information received from Google APIs will adhere to the
+        <a href="https://developer.chrome.com/docs/webstore/program-policies/limited-use">
+          Chrome Web Store User Data Policy</a
+        >, including the Limited Use requirements.
+      </p>
+
+      <h2>Changes and contact</h2>
+      <p>
+        This policy will be updated if the extension's data practices change. Questions can be submitted through the
+        <a href="https://github.com/D3SOX/gh-fork-compare-fix/issues">project's GitHub issue tracker</a>.
+      </p>
+    </main>
+
+    <footer>
+      <a href="https://github.com/D3SOX/gh-fork-compare-fix">Source code</a>
+    </footer>
+  </body>
+</html>
