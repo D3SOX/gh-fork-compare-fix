@@ -27,7 +27,7 @@ Works in Chrome and Firefox (Manifest V3, no build step, no dependencies).
 
 **Chrome / Chromium / Edge** — `chrome://extensions` → enable *Developer mode* → *Load unpacked* → pick this folder.
 
-**Firefox** — `about:debugging#/runtime/this-firefox` → *Load Temporary Add-on* → pick `manifest.json`.
+**Firefox 142+** — `about:debugging#/runtime/this-firefox` → *Load Temporary Add-on* → pick `manifest.json`.
 Temporary add-ons are removed on restart; for a permanent install, zip the folder and sign it via
 [addons.mozilla.org](https://addons.mozilla.org/developers/) (`zip -r gh-fork-compare-fix.zip manifest.json icons src`).
 
