@@ -14,13 +14,18 @@ own default branch**:
 github.com/upstream/repo/compare/main...owner:repo:my-branch    ->    github.com/owner/repo/compare/my-default...my-branch
 ```
 
-It also restates the branch info bar against your own default branch, so an enabled fork reads exactly like a
-repository that is not a fork:
+![The Contribute menu on a fork, opening a pull request against the fork itself](docs/shots/page-dropdown.webp)
 
-```
-This branch is 1416 commits ahead of and 59 commits behind upstream/repo:main.   (GitHub)
-This branch is 1 commit ahead of and 212 commits behind my-default.              (with this extension)
-```
+It also restates the branch info bar against your own default branch, so an enabled fork reads exactly like a
+repository that is not a fork — with the commit counts that actually matter to you:
+
+**Before** — counted against upstream, every link opens a pull request against upstream:
+
+![GitHub: this branch is 1498 commits ahead of and 37 commits behind FreeTubeApp/FreeTube:development](docs/shots/bar-before.webp)
+
+**After** — counted against your own default branch, and the links stay in your repository:
+
+![With the extension: this branch is 2 commits ahead of and 111 commits behind development](docs/shots/bar-after.webp)
 
 Optionally it also redirects when such an upstream compare page is already open.
 
@@ -39,6 +44,8 @@ Temporary add-ons are removed on restart; for a permanent install, zip the folde
 Click the toolbar icon while a repository is open to toggle it on or off — the tab reloads so GitHub re-renders with
 the new setting. Repositories enabled through an `owner/*` pattern show up as enabled but can only be changed in the
 options page.
+
+![The extension popup, with a toggle to enable the current repository](docs/shots/popup.png)
 
 The options page (*Manage repositories…* in the popup) takes the same repositories as `owner/repo`, or `owner/*` for
 every repository of an owner.
