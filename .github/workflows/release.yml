@@ -1,0 +1,85 @@
+name: Release
+
+# Tag a commit with the manifest version to publish it, e.g. `git tag v1.0.0 && git push --tags`.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      # The store steps are skipped until these secrets exist.
+      AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+      AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+      CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+      CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+      CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+      CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Check the tag matches the manifest version
+        run: |
+          version=$(jq -r .version manifest.json)
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match manifest version $version"
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Lint extension
+        run: bunx --bun web-ext lint --source-dir . --warnings-as-errors
+
+      - name: Build packages
+        run: |
+          mkdir -p dist build/chrome
+          zip -r "dist/gh-fork-compare-fix-$VERSION-firefox.zip" manifest.json icons src LICENSE README.md
+
+          # browser_specific_settings is Firefox-only; drop it so the Chrome validator cannot object.
+          cp -r icons src LICENSE README.md build/chrome/
+          jq 'del(.browser_specific_settings)' manifest.json > build/chrome/manifest.json
+          (cd build/chrome && zip -r "$GITHUB_WORKSPACE/dist/gh-fork-compare-fix-$VERSION-chrome.zip" .)
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --generate-notes dist/*.zip
+
+      - name: Sign on addons.mozilla.org
+        if: env.AMO_JWT_ISSUER != ''
+        run: |
+          bunx --bun web-ext sign \
+            --source-dir . \
+            --artifacts-dir dist/amo \
+            --channel "${{ vars.AMO_CHANNEL || 'listed' }}" \
+            --api-key "$AMO_JWT_ISSUER" \
+            --api-secret "$AMO_JWT_SECRET"
+
+      - name: Attach the signed add-on to the release
+        if: env.AMO_JWT_ISSUER != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The listed channel submits for review instead of returning a file.
+          shopt -s nullglob
+          for xpi in dist/amo/*.xpi; do
+            gh release upload "$GITHUB_REF_NAME" "$xpi"
+          done
+
+      - name: Publish to the Chrome Web Store
+        if: env.CWS_CLIENT_ID != ''
+        env:
+          EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: |
+          bunx --bun chrome-webstore-upload-cli@3 upload \
+            --source "dist/gh-fork-compare-fix-$VERSION-chrome.zip" \
+            --auto-publish

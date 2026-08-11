@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Check manifest
+        run: jq -e '.manifest_version == 3 and (.version | test("^[0-9]+(\\.[0-9]+)*$"))' manifest.json
+
+      - name: Check JavaScript syntax
+        run: |
+          for file in src/*.js; do
+            node --check "$file"
+          done
+
+      - name: Lint extension
+        run: bunx --bun web-ext lint --source-dir . --warnings-as-errors

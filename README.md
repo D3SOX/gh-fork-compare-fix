@@ -60,6 +60,28 @@ Data it needs comes from GitHub's own endpoints, using your existing session —
 - commits ahead/behind your default branch: `/<owner>/<repo>/branches/deferred_metadata`, the same endpoint the
   branches page uses.
 
+## Releasing
+
+Bump `version` in `manifest.json`, then tag that commit:
+
+```bash
+git tag v1.0.1 && git push --tags
+```
+
+[`.github/workflows/release.yml`](.github/workflows/release.yml) checks that the tag matches the manifest version,
+lints, builds a Firefox and a Chrome zip (the Chrome one without the Firefox-only `browser_specific_settings` key) and
+publishes them as a GitHub release.
+
+Store publishing is wired up but stays skipped until the matching secrets exist:
+
+| Secret | Used for |
+| --- | --- |
+| `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | signing/submitting on addons.mozilla.org ([API keys](https://addons.mozilla.org/developers/addon/api/key/)) |
+| `CWS_EXTENSION_ID`, `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN` | uploading and publishing on the Chrome Web Store |
+
+The AMO channel defaults to `listed`; set the repository variable `AMO_CHANNEL` to `unlisted` to get a signed `.xpi`
+attached to the release instead of a review submission.
+
 ## License
 
 [GPL-3.0](LICENSE)
