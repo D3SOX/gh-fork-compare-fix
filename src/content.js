@@ -10,7 +10,6 @@
   const COMPARE_PATH_RE = /^\/([^/]+)\/([^/]+)\/compare\/(.+)$/;
   const PULL_NEW_PATH_RE = /^\/([^/]+)\/([^/]+)\/pull\/new\/(.+)$/;
   const LINK_SELECTOR = 'a[href*="/compare/"], a[href*="/pull/new/"]';
-  const INFO_BAR_SELECTOR = '[data-testid="branch-info-bar"]';
   const BRANCH_NAME_SELECTOR = '[data-component="BranchName"]';
   const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
   const CACHE_PREFIX = 'defaultBranch:';
@@ -55,7 +54,7 @@
       if (settings.redirect) redirectIfNeeded();
     }
     rewriteLinks();
-    rewriteInfoBar();
+    rewriteBranchSentences();
   }
 
   async function redirectIfNeeded() {
@@ -87,16 +86,17 @@
   }
 
   /**
-   * On a fork the branch info bar counts commits against the upstream repository
-   * ("1416 commits ahead of and 59 commits behind Upstream/Repo:development").
-   * Restate it against the repo's own default branch, which is exactly what a
-   * repository that is not a fork shows.
+   * On a fork, the branch info bar and the Contribute menu count commits against
+   * the upstream repository ("1416 commits ahead of Upstream/Repo:development").
+   * Restate them against the repo's own default branch, which is exactly what a
+   * repository that is not a fork shows. Upstream references are the ones whose
+   * branch name is an "owner/repo:ref" chip; a plain ref is already ours.
    */
-  async function rewriteInfoBar() {
-    const bar = document.querySelector(INFO_BAR_SELECTOR);
-    const branchName = bar?.querySelector(BRANCH_NAME_SELECTOR);
-    const sentence = branchName?.parentElement;
-    if (!sentence) return;
+  async function rewriteBranchSentences() {
+    const upstream = [...document.querySelectorAll(BRANCH_NAME_SELECTOR)].filter((name) =>
+      name.textContent.includes(':'),
+    );
+    if (!upstream.length) return;
 
     const nwo = repoFromUrl(location.href);
     if (!nwo || !repoMatches(settings.repos, nwo)) return;
@@ -105,15 +105,29 @@
     const branch = currentBranch();
     const defaultBranch = await getDefaultBranch(owner, repo);
     if (!branch || !defaultBranch || branch === defaultBranch) return;
-    if (branchName.textContent === defaultBranch) return; // already rewritten
 
     const counts = await aheadBehind(owner, repo, branch);
-    if (!counts || !sentence.isConnected) return;
+    if (!counts) return;
 
-    const compareLink = (label, base, head) => {
+    for (const branchName of upstream) {
+      rewriteSentence(branchName, { owner, repo, branch, defaultBranch, counts });
+    }
+  }
+
+  function rewriteSentence(branchName, { owner, repo, branch, defaultBranch, counts }) {
+    const sentence = branchName.parentElement;
+    if (!sentence?.isConnected) return;
+
+    // The info bar links its counts, the Contribute menu does not - keep whichever it is.
+    const template = sentence.querySelector('a[data-component="Link"]');
+    const part = (label, base, head) => {
+      if (!template) {
+        const text = document.createElement('span');
+        text.textContent = label;
+        return text;
+      }
       // Cloned so the link keeps GitHub's own (hashed) classes.
-      const template = bar.querySelector('a[data-component="Link"]');
-      const link = template ? template.cloneNode(false) : document.createElement('a');
+      const link = template.cloneNode(false);
       link.textContent = label;
       link.href = `/${owner}/${repo}/compare/${encodeRef(base)}...${encodeRef(head)}`;
       return link;
@@ -121,9 +135,9 @@
     const commits = (count) => `${count} commit${count === 1 ? '' : 's'}`;
 
     const parts = [];
-    if (counts.ahead) parts.push(compareLink(`${commits(counts.ahead)} ahead of`, defaultBranch, branch));
+    if (counts.ahead) parts.push(part(`${commits(counts.ahead)} ahead of`, defaultBranch, branch));
     if (counts.ahead && counts.behind) parts.push(' and ');
-    if (counts.behind) parts.push(compareLink(`${commits(counts.behind)} behind`, branch, defaultBranch));
+    if (counts.behind) parts.push(part(`${commits(counts.behind)} behind`, branch, defaultBranch));
 
     branchName.textContent = defaultBranch;
     sentence.replaceChildren(
