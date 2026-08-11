@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GitHub Fork Compare Fix",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Makes GitHub compare/pull request links on your forks point at your own repository instead of upstream.",
   "permissions": ["storage", "activeTab"],
   "content_scripts": [
