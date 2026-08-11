@@ -109,6 +109,29 @@
         color: var(--fg);
       }
 
+      .star-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        min-width: 3.5rem;
+        padding: 0.25rem 0.6rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg-soft);
+        font-size: 0.85rem;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .star-count:hover {
+        border-color: var(--accent);
+      }
+
+      .star-count svg {
+        width: 1rem;
+        height: 1rem;
+        fill: currentColor;
+      }
+
       /* Hero */
 
       .hero {
@@ -359,7 +382,18 @@
         </svg>
         GitHub Fork Compare Fix
       </span>
-      <a href="https://github.com/D3SOX/gh-fork-compare-fix">Source</a>
+      <a
+        class="star-count"
+        href="https://github.com/D3SOX/gh-fork-compare-fix"
+        aria-label="View the repository on GitHub"
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path
+            d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.969.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.791l.72-4.192L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.501a.75.75 0 0 1-.565.41l-3.098.45 2.241 2.185a.75.75 0 0 1 .216.664l-.529 3.085 2.77-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.528-3.085a.75.75 0 0 1 .216-.664l2.241-2.184-3.098-.45a.75.75 0 0 1-.565-.41Z"
+          />
+        </svg>
+        <span data-star-count aria-hidden="true">—</span>
+      </a>
     </header>
 
     <div class="hero">
@@ -516,5 +550,28 @@
         <a href="https://claude.com/claude-code">Claude</a> (Opus 5, in Claude Code)
       </span>
     </footer>
+    <script>
+      const starCount = document.querySelector('[data-star-count]');
+
+      fetch('https://api.github.com/repos/D3SOX/gh-fork-compare-fix')
+        .then((response) => {
+          if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
+          return response.json();
+        })
+        .then((repository) => {
+          const count = repository.stargazers_count;
+          if (!Number.isInteger(count)) return;
+
+          starCount.textContent = new Intl.NumberFormat('en', {
+            notation: count >= 1000 ? 'compact' : 'standard',
+            maximumFractionDigits: 1,
+          }).format(count);
+          starCount.parentElement.setAttribute(
+            'aria-label',
+            `View the repository on GitHub (${count.toLocaleString('en')} ${count === 1 ? 'star' : 'stars'})`,
+          );
+        })
+        .catch(() => {});
+    </script>
   </body>
 </html>
