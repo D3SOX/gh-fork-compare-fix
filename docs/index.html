@@ -377,10 +377,10 @@
     </header>
 
     <div class="hero">
-      <h1>Your fork is a real repository.<br />GitHub should treat it like one.</h1>
+      <h1>Stop sending your fork’s pull requests upstream.</h1>
       <p>
-        On a fork, every compare and pull request link points at upstream — so you open PRs against the wrong
-        repository. This extension points them back at your own, against your own default branch.
+        Use a fork as your own repository without fighting GitHub’s upstream defaults. Compare branches and open pull
+        requests against the branch you actually use.
       </p>
       <div class="cta">
         <a class="button primary" href="https://github.com/D3SOX/gh-fork-compare-fix/releases/latest">
@@ -412,8 +412,8 @@
       <section>
         <h2>What changes</h2>
         <p class="lede">
-          Same GitHub, same design — only the repository it talks about is yours. The commit counts are recomputed
-          against your default branch, so they are the numbers that actually matter to you.
+          See the branch relationship you care about. Ahead and behind counts are recalculated against your fork’s
+          default branch.
         </p>
 
         <div class="compare">
@@ -426,7 +426,9 @@
               height="184"
               alt="GitHub showing: this branch is 1498 commits ahead of and 37 commits behind FreeTubeApp/FreeTube:development"
             />
-            <p class="caption">Counted against upstream, and every link here opens a pull request against upstream.</p>
+            <p class="caption">
+              Counted against upstream, and every link here opens a pull request against upstream.
+            </p>
           </div>
 
           <div class="panel good">
@@ -438,19 +440,20 @@
               height="130"
               alt="The same bar showing: this branch is 2 commits ahead of and 111 commits behind development"
             />
-            <p class="caption">Counted against your own default branch, and the links stay in your repository.</p>
+            <p class="caption">
+              Counted against your own default branch, and the links stay in your repository.
+            </p>
           </div>
         </div>
       </section>
 
       <section>
-        <h2>One click per repository</h2>
+        <h2>Simple, per-repository setup</h2>
         <div class="popup-row">
           <div>
             <p class="lede">
-              Open a repository, click the toolbar icon, done. Nothing happens on repositories you have not enabled —
-              forks you actually contribute upstream from keep working exactly as before. Add a whole account at once
-              with an <code>owner/*</code> pattern in the options page.
+              The fix is opt-in. Enable it for a single repository or use <code>owner/*</code> for an account, while
+              forks used for upstream contributions remain unchanged.
             </p>
           </div>
           <img
@@ -472,10 +475,9 @@
                 d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"
               />
             </svg>
-            <h3>Every entry point</h3>
+            <h3>All the usual compare links</h3>
             <p>
-              The Contribute menu, "Compare &amp; pull request", the commits-ahead link and <code>/pull/new/</code>
-              links all land in your repository.
+              It corrects the Contribute menu, branch banners, ahead links, and direct new-pull-request URLs.
             </p>
           </div>
           <div class="feature">
@@ -484,9 +486,9 @@
                 d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"
               />
             </svg>
-            <h3>Your default branch</h3>
+            <h3>Compare against your own base</h3>
             <p>
-              A branch is compared against <em>your</em> default branch, not upstream's — the diff you were looking for.
+              Your fork’s default branch becomes the base, so the diff matches the work you intended to review.
             </p>
           </div>
           <div class="feature">
@@ -495,11 +497,8 @@
                 d="M7.467.133a1.748 1.748 0 0 1 1.066 0l5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.7 1.7 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667Zm.61 1.429a.25.25 0 0 0-.153 0l-5.25 1.68a.25.25 0 0 0-.174.238V7c0 1.358.275 2.666 1.057 3.86.784 1.194 2.121 2.34 4.366 3.297a.2.2 0 0 0 .142 0c2.245-.957 3.582-2.103 4.366-3.297C13.225 9.666 13.5 8.358 13.5 7V3.48a.25.25 0 0 0-.174-.238l-5.25-1.68Z"
               />
             </svg>
-            <h3>No tracking or telemetry</h3>
-            <p>
-              No extension accounts, tokens, analytics or telemetry. It only talks to GitHub and stores the settings
-              needed to make your selected repositories work.
-            </p>
+            <h3>Private by design</h3>
+            <p>No sign-up and no data collection. Just local settings and the GitHub requests needed to fix the page.</p>
           </div>
           <div class="feature">
             <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -507,10 +506,9 @@
                 d="M15 2.75a.75.75 0 0 1-.75.75h-2a.75.75 0 0 1 0-1.5h2a.75.75 0 0 1 .75.75Zm-9.978 0a.75.75 0 0 1-.75.75H1.75a.75.75 0 0 1 0-1.5h2.522a.75.75 0 0 1 .75.75ZM15 8a.75.75 0 0 1-.75.75H8.75a.75.75 0 0 1 0-1.5h5.5A.75.75 0 0 1 15 8Zm-9 0a.75.75 0 0 1-.75.75h-3.5a.75.75 0 0 1 0-1.5h3.5A.75.75 0 0 1 6 8Zm9 5.25a.75.75 0 0 1-.75.75h-2a.75.75 0 0 1 0-1.5h2a.75.75 0 0 1 .75.75Zm-9.978 0a.75.75 0 0 1-.75.75H1.75a.75.75 0 0 1 0-1.5h2.522a.75.75 0 0 1 .75.75ZM7.5 1.75a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5Zm0 10.5a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5ZM6.75 8a1.75 1.75 0 1 1 3.5 0 1.75 1.75 0 0 1-3.5 0Z"
               />
             </svg>
-            <h3>Opt in per repository</h3>
+            <h3>You control the scope</h3>
             <p>
-              Toggle from the toolbar, or list repositories as <code>owner/repo</code> and <code>owner/*</code>.
-              Everything else on GitHub is untouched.
+              Choose individual forks or an entire owner. The extension does nothing outside the scope you set.
             </p>
           </div>
         </div>
