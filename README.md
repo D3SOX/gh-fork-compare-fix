@@ -1,7 +1,8 @@
 # GitHub Fork Compare Fix
 
-**[gh-fork-compare-fix.d3sox.me](https://gh-fork-compare-fix.d3sox.me)** · coming soon to Firefox Add-ons and the
-Chrome Web Store; until then grab a zip from [Releases](https://github.com/D3SOX/gh-fork-compare-fix/releases/latest).
+**[gh-fork-compare-fix.d3sox.me](https://gh-fork-compare-fix.d3sox.me)** · available on the
+[Chrome Web Store](https://chromewebstore.google.com/detail/github-fork-compare-fix/mkmipkjkkikdfkfciofgmeicmafnkogh);
+coming soon to Firefox Add-ons.
 
 On a fork, GitHub points every compare / pull request link at the upstream repository — the "Contribute" menu, the
 "Compare & pull request" banner and the "N commits ahead" link in the branch info bar. If you use your fork as a real
@@ -33,7 +34,8 @@ Works in Chrome and Firefox (Manifest V3, no build step, no dependencies).
 
 ## Install
 
-**Chrome / Chromium / Edge** — `chrome://extensions` → enable *Developer mode* → *Load unpacked* → pick this folder.
+**Chrome / Chromium / Edge** — install it from the
+[Chrome Web Store](https://chromewebstore.google.com/detail/github-fork-compare-fix/mkmipkjkkikdfkfciofgmeicmafnkogh).
 
 **Firefox 142+** — `about:debugging#/runtime/this-firefox` → *Load Temporary Add-on* → pick `manifest.json`.
 Temporary add-ons are removed on restart; for a permanent install, zip the folder and sign it via
