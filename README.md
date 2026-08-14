@@ -89,7 +89,7 @@ Store publishing is wired up but stays skipped until the matching secrets exist:
 | Secret | Used for |
 | --- | --- |
 | `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | signing/submitting on addons.mozilla.org ([API keys](https://addons.mozilla.org/developers/addon/api/key/)) |
-| `CWS_EXTENSION_ID`, `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN` | uploading and publishing on the Chrome Web Store |
+| `CWS_EXTENSION_ID`, `CWS_PUBLISHER_ID`, `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN` | uploading and publishing on the Chrome Web Store |
 
 The AMO channel defaults to `listed`; set the repository variable `AMO_CHANNEL` to `unlisted` to get a signed `.xpi`
 attached to the release instead of a review submission.
