@@ -84,15 +84,16 @@ git tag v1.0.1 && git push --tags
 lints, builds a Firefox and a Chrome zip (the Chrome one without the Firefox-only `browser_specific_settings` key) and
 publishes them as a GitHub release.
 
-Store publishing is wired up but stays skipped until the matching secrets exist:
+Tagged releases are also submitted automatically to addons.mozilla.org and the Chrome Web Store using these
+repository secrets:
 
 | Secret | Used for |
 | --- | --- |
 | `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | signing/submitting on addons.mozilla.org ([API keys](https://addons.mozilla.org/developers/addon/api/key/)) |
 | `CWS_EXTENSION_ID`, `CWS_PUBLISHER_ID`, `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN` | uploading and publishing on the Chrome Web Store |
 
-The AMO channel defaults to `listed`; set the repository variable `AMO_CHANNEL` to `unlisted` to get a signed `.xpi`
-attached to the release instead of a review submission.
+The repository variable `AMO_CHANNEL` is set to `listed`, so Firefox releases are submitted for public review. Set it
+to `unlisted` to get a signed `.xpi` attached to the release instead.
 
 Run the [`Check store credentials`](.github/workflows/check-store-credentials.yml) workflow manually to verify both
 stores' credentials without uploading or publishing a release.
