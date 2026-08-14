@@ -94,6 +94,9 @@ Store publishing is wired up but stays skipped until the matching secrets exist:
 The AMO channel defaults to `listed`; set the repository variable `AMO_CHANNEL` to `unlisted` to get a signed `.xpi`
 attached to the release instead of a review submission.
 
+Run the [`Check store credentials`](.github/workflows/check-store-credentials.yml) workflow manually to verify both
+stores' credentials without uploading or publishing a release.
+
 ## Credits
 
 Written by Claude (Opus 5) running in [Claude Code](https://claude.com/claude-code) — including the GitHub endpoint
