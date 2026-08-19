@@ -4,12 +4,12 @@
 [Chrome Web Store](https://chromewebstore.google.com/detail/github-fork-compare-fix/mkmipkjkkikdfkfciofgmeicmafnkogh)
 and [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/github-fork-compare-fix/).
 
-On a fork, GitHub points every compare / pull request link at the upstream repository — the "Contribute" menu, the
-"Compare & pull request" banner and the "N commits ahead" link in the branch info bar. If you use your fork as a real
-repository (own default branch, own PRs), that is the wrong target every single time.
+GitHub assumes that a fork exists to send contributions upstream. Its "Contribute" menu, "Compare & pull request"
+banner, and "N commits ahead" link all open comparisons against the upstream repository. That gets in the way when
+your fork has its own default branch and pull requests.
 
-This extension rewrites those links for repositories you configure, so they compare **your branch against your fork's
-own default branch**:
+This extension rewrites those links in the repositories you choose. Your branch is compared against your fork's own
+default branch:
 
 ```
 github.com/upstream/repo/compare/main...owner:repo:my-branch    ->    github.com/owner/repo/compare/my-default...my-branch
@@ -17,59 +17,57 @@ github.com/upstream/repo/compare/main...owner:repo:my-branch    ->    github.com
 
 ![The Contribute menu on a fork, opening a pull request against the fork itself](docs/shots/page-dropdown.webp)
 
-It also restates the branch info bar against your own default branch, so an enabled fork reads exactly like a
-repository that is not a fork — with the commit counts that actually matter to you:
+It also recalculates the branch info bar against your fork's default branch:
 
-**Before** — counted against upstream, every link opens a pull request against upstream:
+**Before:** GitHub counts commits against upstream and opens pull requests there.
 
 ![GitHub: this branch is 1498 commits ahead of and 37 commits behind FreeTubeApp/FreeTube:development](docs/shots/bar-before.webp)
 
-**After** — counted against your own default branch, and the links stay in your repository:
+**After:** the extension counts commits against your default branch and keeps the links in your fork.
 
 ![With the extension: this branch is 2 commits ahead of and 111 commits behind development](docs/shots/bar-after.webp)
 
-Optionally it also redirects when such an upstream compare page is already open.
+It can also redirect an upstream comparison after you open it.
 
-Works in Chrome and Firefox (Manifest V3, no build step, no dependencies).
+The extension works in Chrome and Firefox. Both builds use Manifest V3 and have no build step or dependencies.
 
 ## Install
 
-**Chrome / Chromium / Edge** — install it from the
+For **Chrome, Chromium, or Edge**, install it from the
 [Chrome Web Store](https://chromewebstore.google.com/detail/github-fork-compare-fix/mkmipkjkkikdfkfciofgmeicmafnkogh).
 
-**Firefox 142+** — install it from
+For **Firefox 142 or newer**, install it from
 [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/github-fork-compare-fix/).
 
 ## Configure
 
-Click the toolbar icon while a repository is open to toggle it on or off — the tab reloads so GitHub re-renders with
-the new setting. Repositories enabled through an `owner/*` pattern show up as enabled but can only be changed in the
-options page.
+Open a repository and click the toolbar icon to enable or disable the extension there. The tab reloads so GitHub can
+render with the new setting. A repository enabled by an `owner/*` pattern can only be disabled from the options page.
 
 ![The extension popup, with a toggle to enable the current repository](docs/shots/popup.png)
 
-The options page (*Manage repositories…* in the popup) takes the same repositories as `owner/repo`, or `owner/*` for
-every repository of an owner.
+Open *Manage repositories...* from the popup to edit the full list. Enter `owner/repo` for one repository or `owner/*`
+for every repository owned by that account.
 
-- **Redirect open compare pages** — when enabled, opening an upstream compare page for a configured fork navigates to
-  the fork's own compare page instead. Turn it off to only rewrite links.
+- **Redirect open compare pages.** When enabled, an upstream compare page for a configured fork redirects to the
+  fork's own compare page. Turn it off if you only want the extension to rewrite links.
 
 ## How it works
 
-`src/content.js` runs on `github.com` and watches the DOM, because GitHub renders all of this client-side. It:
+GitHub renders these links in the browser, so `src/content.js` watches the DOM on `github.com`. It does three things:
 
-- rewrites `/compare/` links whose *head* repository is configured while the base repository is a different repo — the
-  "N commits ahead" link, "Compare & pull request", the "Contribute" menu. Links pointing the other way around (the
-  "N commits behind" link) keep their meaning and are left alone.
-- rewrites `/pull/new/<branch>` links, which GitHub would otherwise 302 to the upstream compare page.
-- rebuilds the branch info bar sentence (reusing GitHub's own elements, so the styling is theirs).
+- It rewrites `/compare/` links when the head repository is configured and the base belongs to another repository.
+  This covers "N commits ahead", "Compare & pull request", and the "Contribute" menu. It leaves the "N commits
+  behind" link alone because that link is supposed to point upstream.
+- It rewrites `/pull/new/<branch>` links before GitHub redirects them to the upstream comparison.
+- It rebuilds the branch info bar with GitHub's own elements and styling.
 
-Data it needs comes from GitHub's own endpoints, using your existing session — no third-party requests, no API token:
+The extension uses your existing GitHub session and only sends requests to GitHub. It does not need an API token.
 
-- default branch: the repository page's embedded metadata when available, otherwise `/<owner>/<repo>/branches/all`,
-  cached in `storage.local` for 24 hours.
-- commits ahead/behind your default branch: `/<owner>/<repo>/branches/deferred_metadata`, the same endpoint the
-  branches page uses.
+- It reads the default branch from metadata embedded in the repository page. If that metadata is missing, it requests
+  `/<owner>/<repo>/branches/all`. The result is cached in `storage.local` for 24 hours.
+- It gets the ahead and behind counts from `/<owner>/<repo>/branches/deferred_metadata`, the endpoint used by GitHub's
+  branches page.
 
 ## Releasing
 
@@ -79,9 +77,9 @@ Bump `version` in `manifest.json`, then tag that commit:
 git tag v1.0.1 && git push --tags
 ```
 
-[`.github/workflows/release.yml`](.github/workflows/release.yml) checks that the tag matches the manifest version,
-lints, builds a Firefox and a Chrome zip (the Chrome one without the Firefox-only `browser_specific_settings` key) and
-publishes them as a GitHub release.
+The [release workflow](.github/workflows/release.yml) checks that the tag matches the manifest version, runs the
+linter, and builds separate Firefox and Chrome archives. The Chrome archive omits the Firefox-only
+`browser_specific_settings` key. The workflow then publishes both archives in a GitHub release.
 
 Tagged releases are also submitted automatically to addons.mozilla.org and the Chrome Web Store using these
 repository secrets:
@@ -91,16 +89,16 @@ repository secrets:
 | `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | signing/submitting on addons.mozilla.org ([API keys](https://addons.mozilla.org/developers/addon/api/key/)) |
 | `CWS_EXTENSION_ID`, `CWS_PUBLISHER_ID`, `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN` | uploading and publishing on the Chrome Web Store |
 
-The repository variable `AMO_CHANNEL` is set to `listed`, so Firefox releases are submitted for public review. Set it
-to `unlisted` to get a signed `.xpi` attached to the release instead.
+The repository variable `AMO_CHANNEL` is currently set to `listed`, so Firefox releases go through public review. Set
+it to `unlisted` to attach a signed `.xpi` to the GitHub release instead.
 
 Run the [`Check store credentials`](.github/workflows/check-store-credentials.yml) workflow manually to verify both
 stores' credentials without uploading or publishing a release.
 
 ## Credits
 
-Written by Claude (Opus 5) running in [Claude Code](https://claude.com/claude-code) — including the GitHub endpoint
-spelunking behind the commit counts, and verified against a real browser session on github.com.
+Claude Opus 5 wrote the extension in [Claude Code](https://claude.com/claude-code), including the work to find GitHub's
+commit-count endpoints. The behavior was checked in a real browser session on github.com.
 
 ## License
 
