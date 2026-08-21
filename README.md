@@ -1,4 +1,4 @@
-# GitHub Fork Compare Fix
+<h1><img src="icons/icon.svg" alt="" width="40" height="40" align="left">GitHub Fork Compare Fix</h1>
 
 **[gh-fork-compare-fix.d3sox.me](https://gh-fork-compare-fix.d3sox.me)** · available on the
 [Chrome Web Store](https://chromewebstore.google.com/detail/github-fork-compare-fix/mkmipkjkkikdfkfciofgmeicmafnkogh)
